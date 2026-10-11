@@ -1,0 +1,11 @@
+study:
+  period_start: "2022-04-01"
+  period_end: "2024-12-31"
+  reporting_basis: "Standalone"
+  expected_quarters: 11
+paths:
+  manifest: "data/manifests/download_manifest.csv"
+  raw_xml: "/content/drive/MyDrive/nse_xml_2022_2024"
+  interim: "/content/drive/MyDrive/nse-financial-research/data/interim"
+  processed: "/content/drive/MyDrive/nse-financial-research/data/processed"
+  quality: "/content/drive/MyDrive/nse-financial-research/outputs/quality"

@@ -1,0 +1,10 @@
+# Original local workspace (code, data, logs, IDE settings, and virtual environment).
+/backup_existing_*/
+
+# Local credentials, environments and generated agent checkpoints.
+.env
+.env.*
+!.env.example
+.venv/
+__pycache__/
+/nse-financial-research/output/company_classification/

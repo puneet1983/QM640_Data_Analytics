@@ -1,5 +1,12 @@
 # NSE Standalone Financial Research - Google Colab
 
+## Company industry and sector agent
+
+A local Groq agent reads company symbols and names from the extracted CSV and
+creates a separate industry/sector mapping with web source links and review flags.
+See [setup and run instructions](ai/README.md). AI code is organized into
+`ai/agent`, `ai/tools`, and `ai/github`, with tests in `ai/tests`.
+
 Study period: April 1, 2022 to December 31, 2024 (11 quarters).
 
 ## Setup

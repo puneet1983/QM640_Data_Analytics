@@ -7,4 +7,4 @@
 !.env.example
 .venv/
 __pycache__/
-/nse-financial-research/output/company_classification/
+**/output/company_classification/

@@ -1,0 +1,82 @@
+{
+  "version": "6-multiple-search-tools",
+  "input": "output/final_extracted_data/company_quarterly_financials_extracted.csv",
+  "output": "output/company_classification/company_industry_mapping.csv",
+  "lookup": {
+    "provider": "fallback",
+    "providers": [
+      {"provider": "ddgs", "backend": "duckduckgo"},
+      {"provider": "ddgs", "backend": "bing"},
+      {"provider": "wikipedia"}
+    ],
+    "web_search": {
+      "query_template": "{company_name} {symbol} industry sector",
+      "region": "in-en",
+      "max_results": 3,
+      "taxonomy": "Website labels (unharmonized)",
+      "company_name_selector": "h1",
+      "symbol_context_selectors": ["h1", "h2", ".infobox"],
+      "symbol_pattern": "\\bNSE\\s*:\\s*([A-Za-z0-9&_-]+)",
+      "field_labels": {
+        "industry": ["Industry", "Industries"],
+        "sector": ["Sector"],
+        "symbol": ["NSE Symbol", "NSE Ticker"]
+      },
+      "value_selectors": {},
+      "headers": {
+        "User-Agent": "NSEFinancialResearch/1.0 (company classification research; Python requests)",
+        "Accept": "text/html"
+      }
+    },
+    "allow_partial": true,
+    "allow_name_only_match": true,
+    "wikipedia": {
+      "search_endpoint": "https://en.wikipedia.org/w/rest.php/v1/search/page",
+      "html_endpoint": "https://en.wikipedia.org/w/rest.php/v1/page/{title}/html",
+      "page_url": "https://en.wikipedia.org/wiki/{title}",
+      "query_template": "{company_name}",
+      "search_limit": 3,
+      "taxonomy": "Wikipedia infobox",
+      "infobox_selector": "table.infobox",
+      "field_labels": {
+        "industry": ["Industry", "Industries"],
+        "sector": ["Sector"],
+        "traded_as": ["Traded as", "Traded as"]
+      },
+      "symbol_pattern": "\\bNSE\\s*:\\s*([A-Za-z0-9&_-]+)",
+      "headers": {
+        "User-Agent": "NSEFinancialResearch/1.0 (local company classification research; Python requests)",
+        "Accept": "application/json, text/html"
+      }
+    },
+    "endpoint": "https://www.nseindia.com/api/quote-equity",
+    "symbol_parameter": "symbol",
+    "session_url": "https://www.nseindia.com/",
+    "timeout_seconds": 30,
+    "delay_seconds": 1,
+    "taxonomy": "NSE",
+    "headers": {
+      "User-Agent": "Mozilla/5.0",
+      "Accept": "application/json, text/plain, */*",
+      "Referer": "https://www.nseindia.com/"
+    },
+    "fields": {
+      "symbol": "info.symbol",
+      "company_name": "info.companyName",
+      "industry": "industryInfo.industry",
+      "sector": "industryInfo.sector"
+    }
+  },
+  "llm": {
+    "base_url": "https://api.groq.com/openai/v1",
+    "api_key_env": ["GROQ_API_KEY", "Groq_api_key"],
+    "model_env": "GROQ_MODEL",
+    "model": "openai/gpt-oss-120b",
+    "batch_size": 10,
+    "max_completion_tokens": 4096,
+    "timeout_seconds": 120,
+    "max_retries": 3,
+    "prompt_file": "prompts/evaluate_company.txt",
+    "schema_file": "schemas/evaluation.json"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "type": "object",
+  "properties": {
+    "evaluations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "record_id": {"type": "string"},
+          "identity_match": {"type": "boolean"},
+          "classification_supported": {"type": "boolean"},
+          "needs_review": {"type": "boolean"},
+          "reason": {"type": "string"}
+        },
+        "required": ["record_id", "identity_match", "classification_supported", "needs_review", "reason"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["evaluations"],
+  "additionalProperties": false
+}

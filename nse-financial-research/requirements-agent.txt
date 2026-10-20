@@ -1,0 +1,2 @@
+# Compatibility entry point; AI dependencies live with the AI code.
+-r ai/requirements.txt

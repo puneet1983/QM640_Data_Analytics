@@ -1,0 +1,6 @@
+# Optional: required only for the company classification agent.
+# OpenAI-compatible SDK; LLM requests go to Groq using GROQ_API_KEY.
+openai>=2,<3
+requests>=2.31,<3
+beautifulsoup4>=4.12,<5
+ddgs>=9,<10

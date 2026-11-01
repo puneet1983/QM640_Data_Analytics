@@ -17,56 +17,53 @@ Upload the contents of nse-financial-research, including hidden files.
 No repository URL is hardcoded. Open each notebook from Colab's GitHub tab
 using your own repository URL, or upload the notebook directly to Colab.
 
-## Current notebook inventory and research workflow (November 2026)
+## Official research workflow — data acquisition + three analytical notebooks (November 2026)
 
-The [notebooks directory](notebooks/) currently contains the following five
-Jupyter notebooks. They serve overlapping stages rather than forming a strict
-five-step execution sequence.
+This workflow separates **statistical investigation**, **development-stage model selection**, and **frozen final predictive evaluation**. Data acquisition remains upstream. The three analytical notebooks must be executed **01 → 02 → 03** against the **same source extract**.
 
-| Notebook | Research stage | Purpose |
+### Notebook inventory
+
+| Notebook | Role | Main outputs |
 | --- | --- | --- |
-| [Download_Selected_NSE_XML_2022_2024.ipynb](notebooks/Download_Selected_NSE_XML_2022_2024.ipynb) | Data acquisition | Download selected NSE financial-result XML files for the 2022–2024 collection period. |
-| [Nifty500_End_to_End_2022Q1_2025Q4_Runtime_Manifest.ipynb](notebooks/Nifty500_End_to_End_2022Q1_2025Q4_Runtime_Manifest.ipynb) | End-to-end acquisition and extraction | Download the official Nifty 500 list, construct the 2022Q1–2025Q4 download manifest, download source XBRL, parse financial facts with provenance, build standalone quarterly data and a coverage report, and perform preliminary descriptive analysis. The dates in the notebook name describe its intended workflow; they do not imply that all quarters were obtained. |
-| [Nifty500_Statistical_Analysis.ipynb](notebooks/Nifty500_Statistical_Analysis.ipynb) | Earlier combined analytical workflow | Data quality, feature engineering, EDA, sample-size planning, chronological modeling, regression model comparisons, predictive importance, and feature-set comparison. |
-| [Nifty500_Statistical_Analysis_With_Tests.ipynb](notebooks/Nifty500_Statistical_Analysis_With_Tests.ipynb) | Earlier combined analytical workflow with tests | Extends the combined analysis with statistical inference, regression diagnostics, and RQ1–RQ4 testing. It overlaps with the separate interim-report notebook below; results should be checked for consistency before reuse. |
-| [01_Data_Preparation_and_Statistical_Tests.ipynb](notebooks/01_Data_Preparation_and_Statistical_Tests.ipynb) | Interim-report EDA and statistical inference | Audits/cleans the analysis dataset, builds exact next-quarter PAT-growth targets and engineered features, performs EDA and sample-size planning, runs OLS joint and coefficient tests with clustering/multiple-testing controls, and exports statistical diagnostics and model-handoff data. **This is the statistical notebook referenced in the October 2026 interim report.** |
+| [Download_Selected_NSE_XML_2022_2024.ipynb](notebooks/Download_Selected_NSE_XML_2022_2024.ipynb) | Selected NSE XML download workflow; supplementary or alternate collection route. | Source XML files. |
+| [Nifty500_End_to_End_2022Q1_2025Q4_Runtime_Manifest.ipynb](notebooks/Nifty500_End_to_End_2022Q1_2025Q4_Runtime_Manifest.ipynb) | Main Nifty 500 acquisition, manifest generation, XBRL parsing, provenance and quarterly panel construction. The name's 2022Q1–2025Q4 range is intended acquisition scope, **not verified analytical coverage**. | XML, manifest and standardized financial panel outputs. |
+| **[01_Data_Preparation_and_Statistical_Tests.ipynb](notebooks/01_Data_Preparation_and_Statistical_Tests.ipynb)** | **EDA, statistical inference and preliminary RQ1–RQ4 assessment**: quality checks, exact next-quarter PAT growth, descriptive diagnostics, sample-size planning, RQ1 joint associations, RQ2 coefficient tests, RQ3 temporal suitability diagnostics, RQ4 nested engineered-feature OLS test with company-clustered uncertainty. **No predictive model ranking or holdout feature-gain claim**. | `statistical_outputs/prepared_company_quarters.csv`, `statistical_outputs/handoff_manifest.json`, `statistical_outputs/statistical_tests/` (including RQ1–RQ4 statistical results). |
+| **[02_Model_Training_and_Validation.ipynb](notebooks/02_Model_Training_and_Validation.ipynb)** | **Leakage-aware model training, tuning and validation**: historical median baseline, Linear Regression, Ridge, Random Forest, Gradient Boosting. All selection uses training/validation periods only; held-out test targets are not used in optimization. | `model_outputs/validation_trials.csv`, `validation_predictions.csv`, `selection_manifest.json`, fitted training-stage pipelines. |
+| **[03_Final_Model_Evaluation_and_Research_Questions.ipynb](notebooks/03_Final_Model_Evaluation_and_Research_Questions.ipynb)** | **Frozen final RQ1–RQ4 evidence**: refit validation-selected candidates on train+validation; one-time final holdout scoring; baseline comparison (RQ1), permutation importance (RQ2), preselected candidate comparison (RQ3), matched algorithm feature-set comparison (RQ4), exploratory company-block intervals and reporting tables. Never retune using test results. | `final_evaluation_outputs/heldout_model_metrics.csv`, `heldout_predictions.csv`, `RQ1_baseline_comparison.csv`, `RQ2_permutation_importance.csv`, `RQ3_model_comparison.csv`, `RQ4_feature_set_comparison.csv`, `RQ_final_evidence_summary.csv`. |
+| [Nifty500_Statistical_Analysis.ipynb](notebooks/Nifty500_Statistical_Analysis.ipynb) | **Legacy combined** EDA/ML workflow; implementation reference, not the canonical final run order. | Legacy outputs; do not combine with canonical results without cross-checks. |
+| [Nifty500_Statistical_Analysis_With_Tests.ipynb](notebooks/Nifty500_Statistical_Analysis_With_Tests.ipynb) | **Legacy combined** ML + statistical-tests workflow; use only to cross-check or recover earlier experiments. | Legacy outputs; do not cite as current authoritative evidence without fresh execution. |
 
-### Recommended research execution path
+### Canonical inputs, dependencies and execution
 
-1. **Collect and extract NSE data:** Use the end-to-end Nifty 500 notebook as the
-   primary acquisition/extraction workflow. The selected-XML download notebook
-   is an alternative or complementary collection workflow, *not* an additional
-   mandatory step if the source XML is already present.
-2. **Prepare the analysis panel and run EDA/statistics:** Run
-   `01_Data_Preparation_and_Statistical_Tests.ipynb` using its documented
-   analytical input, `Nifty500_Standalone_Quarterly_Available.csv`.
-   Its outputs include `statistical_outputs/prepared_company_quarters.csv`
-   and `statistical_outputs/handoff_manifest.json`.
-3. **Develop and validate prediction models:** Review the existing modeling
-   experiments in `Nifty500_Statistical_Analysis.ipynb` and
-   `Nifty500_Statistical_Analysis_With_Tests.ipynb`. The interim report
-   proposes separating the reproducible predictive work into
-   `02_Model_Experiments_and_Performance.ipynb`; **that proposed notebook
-   is not currently one of the five files in this directory**.
-4. **Write final research findings:** Report the baseline comparison, held-out
-   MAE/RMSE/R², feature importance, model comparison (RQ3), and reported-only
-   versus engineered-feature comparison (RQ4) only after verifying actual
-   execution and chronological, leakage-safe validation.
+1. Acquire and standardize financial filings using the upstream data-collection notebooks. The canonical analytical input for this study is **`Nifty500_Standalone_Quarterly_Available.csv`**. The interim report's observed extract contains 3,824 records for 426 companies covering reporting quarter ends June 2022–December 2024. Later downloads do **not** automatically extend that observed sample.
+2. **Notebook 01:** In Google Colab, upload the input to `/content/Nifty500_Standalone_Quarterly_Available.csv`, or place it at `outputs/nifty500_analysis/Nifty500_Standalone_Quarterly_Available.csv` relative to notebook execution. Run top to bottom. Notebook 01 saves `statistical_outputs/` next to that input. The statistical test stage uses **development periods only**; the expanded RQ3/RQ4 tests must be freshly executed before their new outputs are cited.
+3. **Notebook 02:** Place `statistical_outputs/` alongside your notebook working directory (or under `/content/`) and run top to bottom. It validates the SHA-256 of Notebook 01's prepared data and freezes the primary model plus RQ3/RQ4 comparators in `model_outputs/selection_manifest.json`. It does **not** report final test performance.
+4. **Notebook 03:** With both `statistical_outputs/` and `model_outputs/` in the **same parent folder**, run top to bottom. It verifies hashes, refits frozen candidate configurations using train+validation, and evaluates the reserved test quarters. All predictive results belong to the exported `final_evaluation_outputs/` files.
 
-**Status caveat:** The October 2026 interim report establishes statistical
-results only; it explicitly defers forecasting effectiveness, predictive feature
-importance, RQ3 model rankings, and RQ4 feature-set benefit. Code present in
-earlier combined notebooks is not by itself evidence that a final experiment
-was successfully executed or validated.
+**Environment:** Python 3.10+ with `pandas`, `numpy`, `scipy`, `matplotlib`, `scikit-learn`, `joblib` and Jupyter/IPython. For consistent reproducibility, pin package versions in your final execution environment and include a runtime manifest.
 
-### Historical setup instructions
+**Colab caveat:** Files saved in temporary `/content` storage disappear on session reset. Copy the output folders to persistent storage before closing the runtime. Never store API credentials in GitHub.
 
-The earlier run-order instructions below refer to an older, staged Colab
-workflow (`02_extract_financials.ipynb`,
-`03_validate_and_review_scope.ipynb`, and
-`04_build_research_panel.ipynb`). These filenames are **not among the five
-notebooks currently listed** in `notebooks/`; retain the instructions as
-historical context, not as the current reproducible run order.
+### Research-question boundaries
+
+| Research question | Notebook 01: statistical evidence | Notebooks 02–03: predictive evidence |
+| --- | --- | --- |
+| **RQ1** — Can quarterly financial results predict next-quarter PAT growth? | Cluster-robust joint association test; association does **not** imply forecasting accuracy. | Compare frozen primary model to a historical-median baseline on held-out periods. |
+| **RQ2** — Which variables contribute most? | Cluster-robust coefficient tests, confidence intervals, Holm multiplicity correction. | Permutation importance for the selected model; predictive reliance is **not** causal significance. |
+| **RQ3** — Which model predicts most accurately? | Temporal/residual diagnostics assess possible model assumptions, **not** model ranking. | Compare identically held-out predictions from validation-selected candidate algorithms; distinguish descriptive test ranking from selection. |
+| **RQ4** — Do engineered variables add value? | Company-clustered nested OLS joint test on matched complete-case development rows; tests incremental **in-sample association**. | Same-algorithm reported-only versus enhanced feature-set comparison on held-out data. If a constant baseline wins, feature-value inference for that family is not meaningful. |
+
+### Scientific limitations and reporting status
+
+- The existing October 2026 interim results (RQ1/RQ2 statistical tests) do not establish predictive performance. Added Notebook 01 RQ3/RQ4 code and the new notebooks **have not been verified by a clean run against the complete source CSV as part of this README update**. Do not report new numerical findings until execution and review.
+- Current data have a very short held-out temporal horizon, an unbalanced company panel and extreme PAT-growth values driven by near-zero denominators. Company-block bootstrap intervals are **exploratory** because they do not capture few-quarter common time shocks.
+- Confirm filing dates, source XBRL tag/unit consistency, index coverage and restatements before interpreting outcomes as feasible real-time forecasts.
+- Model selection and feature-set decisions must be fixed on development data. Do not choose a new winner after seeing test metrics; report adverse or inconclusive results transparently.
+- The canonical analytical notebooks do not automatically download raw XBRL filings. They consume a preconstructed standardized CSV, with source audit/provenance recorded by the upstream pipeline.
+
+### Legacy combined notebooks and historical Colab setup
+
+The two `Nifty500_Statistical_Analysis*.ipynb` notebooks predate the three-stage workflow and contain overlapping analysis code. They are retained for traceability and regression comparisons, not as mandatory stages. The older run-order instructions below also mention `02_extract_financials.ipynb`, `03_validate_and_review_scope.ipynb` and `04_build_research_panel.ipynb`, which are not present among the current files listed in `notebooks/`. Those instructions are historical, not the canonical execution path.
 
 ## Legacy Colab run order (historical; see current workflow above)
 
@@ -103,8 +100,9 @@ Missing quarters are not filled with zeros. Conflicting company-quarter rows
 must be reviewed before panel construction. Complete coverage is not proof
 of correct financial mapping or a sufficient statistical research design.
 Original units and source evidence remain in extraction outputs.
-Sector mapping, hypothesis-specific variables, statistical models, and
-paper tables remain future work; this archive does not pretend to implement them.
+The original archive instructions below predate the three-stage analytical notebooks.
+Refer to the official workflow above for current statistical and modeling code;
+no current numerical results are asserted until the notebooks are executed.
 
 ## Repository and Drive storage
 

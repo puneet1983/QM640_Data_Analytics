@@ -17,7 +17,58 @@ Upload the contents of nse-financial-research, including hidden files.
 No repository URL is hardcoded. Open each notebook from Colab's GitHub tab
 using your own repository URL, or upload the notebook directly to Colab.
 
-## Run order
+## Current notebook inventory and research workflow (November 2026)
+
+The [notebooks directory](notebooks/) currently contains the following five
+Jupyter notebooks. They serve overlapping stages rather than forming a strict
+five-step execution sequence.
+
+| Notebook | Research stage | Purpose |
+| --- | --- | --- |
+| [Download_Selected_NSE_XML_2022_2024.ipynb](notebooks/Download_Selected_NSE_XML_2022_2024.ipynb) | Data acquisition | Download selected NSE financial-result XML files for the 2022–2024 collection period. |
+| [Nifty500_End_to_End_2022Q1_2025Q4_Runtime_Manifest.ipynb](notebooks/Nifty500_End_to_End_2022Q1_2025Q4_Runtime_Manifest.ipynb) | End-to-end acquisition and extraction | Download the official Nifty 500 list, construct the 2022Q1–2025Q4 download manifest, download source XBRL, parse financial facts with provenance, build standalone quarterly data and a coverage report, and perform preliminary descriptive analysis. The dates in the notebook name describe its intended workflow; they do not imply that all quarters were obtained. |
+| [Nifty500_Statistical_Analysis.ipynb](notebooks/Nifty500_Statistical_Analysis.ipynb) | Earlier combined analytical workflow | Data quality, feature engineering, EDA, sample-size planning, chronological modeling, regression model comparisons, predictive importance, and feature-set comparison. |
+| [Nifty500_Statistical_Analysis_With_Tests.ipynb](notebooks/Nifty500_Statistical_Analysis_With_Tests.ipynb) | Earlier combined analytical workflow with tests | Extends the combined analysis with statistical inference, regression diagnostics, and RQ1–RQ4 testing. It overlaps with the separate interim-report notebook below; results should be checked for consistency before reuse. |
+| [01_Data_Preparation_and_Statistical_Tests.ipynb](notebooks/01_Data_Preparation_and_Statistical_Tests.ipynb) | Interim-report EDA and statistical inference | Audits/cleans the analysis dataset, builds exact next-quarter PAT-growth targets and engineered features, performs EDA and sample-size planning, runs OLS joint and coefficient tests with clustering/multiple-testing controls, and exports statistical diagnostics and model-handoff data. **This is the statistical notebook referenced in the October 2026 interim report.** |
+
+### Recommended research execution path
+
+1. **Collect and extract NSE data:** Use the end-to-end Nifty 500 notebook as the
+   primary acquisition/extraction workflow. The selected-XML download notebook
+   is an alternative or complementary collection workflow, *not* an additional
+   mandatory step if the source XML is already present.
+2. **Prepare the analysis panel and run EDA/statistics:** Run
+   `01_Data_Preparation_and_Statistical_Tests.ipynb` using its documented
+   analytical input, `Nifty500_Standalone_Quarterly_Available.csv`.
+   Its outputs include `statistical_outputs/prepared_company_quarters.csv`
+   and `statistical_outputs/handoff_manifest.json`.
+3. **Develop and validate prediction models:** Review the existing modeling
+   experiments in `Nifty500_Statistical_Analysis.ipynb` and
+   `Nifty500_Statistical_Analysis_With_Tests.ipynb`. The interim report
+   proposes separating the reproducible predictive work into
+   `02_Model_Experiments_and_Performance.ipynb`; **that proposed notebook
+   is not currently one of the five files in this directory**.
+4. **Write final research findings:** Report the baseline comparison, held-out
+   MAE/RMSE/R², feature importance, model comparison (RQ3), and reported-only
+   versus engineered-feature comparison (RQ4) only after verifying actual
+   execution and chronological, leakage-safe validation.
+
+**Status caveat:** The October 2026 interim report establishes statistical
+results only; it explicitly defers forecasting effectiveness, predictive feature
+importance, RQ3 model rankings, and RQ4 feature-set benefit. Code present in
+earlier combined notebooks is not by itself evidence that a final experiment
+was successfully executed or validated.
+
+### Historical setup instructions
+
+The earlier run-order instructions below refer to an older, staged Colab
+workflow (`02_extract_financials.ipynb`,
+`03_validate_and_review_scope.ipynb`, and
+`04_build_research_panel.ipynb`). These filenames are **not among the five
+notebooks currently listed** in `notebooks/`; retain the instructions as
+historical context, not as the current reproducible run order.
+
+## Legacy Colab run order (historical; see current workflow above)
 
 1. notebooks/Download_Selected_NSE_XML_2022_2024.ipynb:
    upload data/manifests/download_manifest.csv when prompted. XML files

@@ -23,6 +23,8 @@ This workflow separates **statistical investigation**, **development-stage model
 
 ### Notebook inventory
 
+The active `notebooks/` folder has **five notebooks**: two acquisition notebooks and three analytical notebooks. The two superseded combined-analysis notebooks are archived under `notebooks/backup/`.
+
 | Notebook | Role | Main outputs |
 | --- | --- | --- |
 | [Download_Selected_NSE_XML_2022_2024.ipynb](notebooks/Download_Selected_NSE_XML_2022_2024.ipynb) | Selected NSE XML download workflow; supplementary or alternate collection route. | Source XML files. |
@@ -30,8 +32,8 @@ This workflow separates **statistical investigation**, **development-stage model
 | **[01_Data_Preparation_and_Statistical_Tests.ipynb](notebooks/01_Data_Preparation_and_Statistical_Tests.ipynb)** | **EDA, statistical inference and preliminary RQ1–RQ4 assessment**: quality checks, exact next-quarter PAT growth, descriptive diagnostics, sample-size planning, RQ1 joint associations, RQ2 coefficient tests, RQ3 temporal suitability diagnostics, RQ4 nested engineered-feature OLS test with company-clustered uncertainty. **No predictive model ranking or holdout feature-gain claim**. | `statistical_outputs/prepared_company_quarters.csv`, `statistical_outputs/handoff_manifest.json`, `statistical_outputs/statistical_tests/` (including RQ1–RQ4 statistical results). |
 | **[02_Model_Training_and_Validation.ipynb](notebooks/02_Model_Training_and_Validation.ipynb)** | **Leakage-aware model training, tuning and validation**: historical median baseline, Linear Regression, Ridge, Random Forest, Gradient Boosting. All selection uses training/validation periods only; held-out test targets are not used in optimization. | `model_outputs/validation_trials.csv`, `validation_predictions.csv`, `selection_manifest.json`, fitted training-stage pipelines. |
 | **[03_Final_Model_Evaluation_and_Research_Questions.ipynb](notebooks/03_Final_Model_Evaluation_and_Research_Questions.ipynb)** | **Frozen final RQ1–RQ4 evidence**: refit validation-selected candidates on train+validation; one-time final holdout scoring; baseline comparison (RQ1), permutation importance (RQ2), preselected candidate comparison (RQ3), matched algorithm feature-set comparison (RQ4), exploratory company-block intervals and reporting tables. Never retune using test results. | `final_evaluation_outputs/heldout_model_metrics.csv`, `heldout_predictions.csv`, `RQ1_baseline_comparison.csv`, `RQ2_permutation_importance.csv`, `RQ3_model_comparison.csv`, `RQ4_feature_set_comparison.csv`, `RQ_final_evidence_summary.csv`. |
-| [Nifty500_Statistical_Analysis.ipynb](notebooks/Nifty500_Statistical_Analysis.ipynb) | **Legacy combined** EDA/ML workflow; implementation reference, not the canonical final run order. | Legacy outputs; do not combine with canonical results without cross-checks. |
-| [Nifty500_Statistical_Analysis_With_Tests.ipynb](notebooks/Nifty500_Statistical_Analysis_With_Tests.ipynb) | **Legacy combined** ML + statistical-tests workflow; use only to cross-check or recover earlier experiments. | Legacy outputs; do not cite as current authoritative evidence without fresh execution. |
+| [Nifty500_Statistical_Analysis.ipynb](notebooks/backup/Nifty500_Statistical_Analysis.ipynb) | **Legacy combined** EDA/ML workflow; implementation reference, not the canonical final run order. | Legacy outputs; do not combine with canonical results without cross-checks. |
+| [Nifty500_Statistical_Analysis_With_Tests.ipynb](notebooks/backup/Nifty500_Statistical_Analysis_With_Tests.ipynb) | **Legacy combined** ML + statistical-tests workflow; use only to cross-check or recover earlier experiments. | Legacy outputs; do not cite as current authoritative evidence without fresh execution. |
 
 ### Canonical inputs, dependencies and execution
 
@@ -61,9 +63,9 @@ This workflow separates **statistical investigation**, **development-stage model
 - Model selection and feature-set decisions must be fixed on development data. Do not choose a new winner after seeing test metrics; report adverse or inconclusive results transparently.
 - The canonical analytical notebooks do not automatically download raw XBRL filings. They consume a preconstructed standardized CSV, with source audit/provenance recorded by the upstream pipeline.
 
-### Legacy combined notebooks and historical Colab setup
+### Archived notebooks and historical Colab setup
 
-The two `Nifty500_Statistical_Analysis*.ipynb` notebooks predate the three-stage workflow and contain overlapping analysis code. They are retained for traceability and regression comparisons, not as mandatory stages. The older run-order instructions below also mention `02_extract_financials.ipynb`, `03_validate_and_review_scope.ipynb` and `04_build_research_panel.ipynb`, which are not present among the current files listed in `notebooks/`. Those instructions are historical, not the canonical execution path.
+The two `Nifty500_Statistical_Analysis*.ipynb` notebooks predate the three-stage workflow and contain overlapping analysis code. They have been moved intact to [`notebooks/backup/`](notebooks/backup/) to keep the active notebook folder focused. They are retained for traceability and regression comparisons, not as mandatory stages. The older run-order instructions below also mention `02_extract_financials.ipynb`, `03_validate_and_review_scope.ipynb` and `04_build_research_panel.ipynb`, which are not present among the current files listed in `notebooks/`. Those instructions are historical, not the canonical execution path.
 
 ## Legacy Colab run order (historical; see current workflow above)
 
